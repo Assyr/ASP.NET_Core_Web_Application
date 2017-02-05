@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using TheWorld.ViewModels;
 using TheWorld.Services;
 using Microsoft.Extensions.Configuration;
+using TheWorld.Models;
 
 namespace TheWorld.Controllers.Web
 {
@@ -14,20 +15,27 @@ namespace TheWorld.Controllers.Web
     {
         private IMailService _mailService;
         private IConfigurationRoot _config;
+        private WorldContext _context;
 
-        public AppController(IMailService mailService, IConfigurationRoot config)
+        public AppController(IMailService mailService, IConfigurationRoot config, WorldContext context)
         {
             _mailService = mailService;
             _config = config;
+            _context = context;
         }
 
         public IActionResult Index()
         {
-            return View(); //Go find a view - render it and return it to the user
+            //context goes out into a database someplace, queries for the trips. This essentially runs a query
+            //but we don't have to write an SQL query directly - we're dealing with objects directly.
+            var data = _context.Trips.ToList(); //Go to the database and grab the list of all the trips
+            //data now holds a list of all our trips
+
+            return View(data); //Go find a view - render it and return it to the user
         }
 
         public IActionResult Contact()
-        {
+        {            
             return View();
         }
 
