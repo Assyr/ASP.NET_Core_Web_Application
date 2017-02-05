@@ -1,0 +1,73 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title>The World - @ViewBag.Title</title>
+    <meta charset="utf-8" />
+
+    <link rel="stylesheet" href="~/lib/bootstrap/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/lib/bootswatch/yeti/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/lib/font-awesome/css/font-awesome.min.css" />
+    <!--The below css file overrides any styling according to its contents-->
+    <link rel="stylesheet" href="~/css/site.css" />
+</head>
+
+<body>
+    <div id="sidebar">
+        <img src="~/img/avatar.jpg" alt="image_of_me" class="avatar" />
+        <span id="username">Leon Dawod</span>
+        <ul class="nav">
+            <li class="active"><a asp-controller="App" asp-action="Index">Home</a></li>
+            <li><a asp-controller="App" asp-action="About">About</a></li>
+            <li><a asp-controller="App" asp-action="Contact">Contact</a></li>
+        </ul>
+    </div>
+
+    <div id="wrapper">
+        <nav class="navbar navbar-inverse">
+            <!--This is where our navigation will be-->
+            <div class="container-fluid">
+                <!--Create a container that is fluid-->
+                <ul class="nav navbar-nav navbar-left">
+                    <!--Create an unordered list to the left of the navbar-->
+                    <li>
+                        <!--Add a button to this list item (our sidebarToggle)-->
+                        <button id="sidebarToggle" class="btn btn-primary">
+                            <i class="fa fa-angle-left"></i>
+                        </button>
+                    </li>
+                </ul>
+                <a asp-controller="App" asp-action="Index" class="navbar-brand">The World</a><!--Add a navbar-brand with the text 'The World' that triggers the action 'Index' from our AppController class, which we know will return the index view which is index.cshtml-->
+                <ul class="nav navbar-nav navbar-right">
+                    <!--Create another unordered list to the right of the navbar-->
+                    <li>
+                        <a href="#" class="btn btn-sm btn-info">
+                            <i class="fa fa-save"></i> Save
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" class="btn btn-sm btn-info">
+                            <i class="fa fa-print"></i> Print
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+
+        <div id="main" class="container-fluid">
+            @RenderBody() <!--This is where we can inject something-->
+        </div>
+
+        <div id="footer" class="container-fluid">
+            <div class="navbar navbar-inverse navbar-fixed-bottom">
+                <h4 class="text-center text-info">&copy; 2015 The World Ltd.</h4>
+            </div>
+            </div>
+        </div>
+
+        <script type="text/javascript" src="~/lib/jquery/dist/jquery.min.js"></script>
+        <script type="text/javascript" src="~/lib/bootstrap/js/bootstrap.min.js"></script>
+        <script type="text/javascript" src="~/js/site.js"></script>
+        @RenderSection("scripts", false) <!--If we have any scripts in the 'scripts' section on the page injecting itself into here, add the scripts at the bottom here since we want to execute them afterwards-->
+
+</body>
+</html>
