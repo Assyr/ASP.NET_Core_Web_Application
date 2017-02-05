@@ -49,11 +49,15 @@ namespace TheWorld
             //Register entity framework and our specific context
             services.AddDbContext<WorldContext>();
 
+            //We have our WorldContextSeedData setup - but now we actually need to call it to push the data to the database so we have something to work with
+            services.AddTransient<WorldContextSeedData>();//Construct it here so we can grab it in 'Configure' method
+
             services.AddMvc();//Hey, here register all the MVC services
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)//configure the middleware!
+        public void Configure(IApplicationBuilder app, 
+            IHostingEnvironment env, WorldContextSeedData seeder)//configure the middleware!
         {
             //We want to avoid throwing sensitive exception information to the user
             //We can solve this with the following
@@ -69,6 +73,9 @@ namespace TheWorld
                     defaults: new { controller = "App", action = "Index" } //And if one isn't provided, go grab our 'App' controller and use the 'Index' action
                     );               
             }); //Now use the MVC Services
+
+            seeder.EnsureSeedData().Wait(); //Make our call to the EnsureSeedData method part of the 'WorldContextSeedData' class
+
         }
     }
 }
