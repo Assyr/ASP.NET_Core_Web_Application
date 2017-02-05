@@ -48,6 +48,12 @@ namespace TheWorld
 
             //Register entity framework and our specific context
             services.AddDbContext<WorldContext>();
+            services.AddScoped<IWorldRepository, WorldRepository>();
+
+            //Interfaces allow us to adjust the implemention of the contents of the interface
+            //for example, IWorldRepository specifies a method 'GetAllTrips' but doesn't say how to implement it
+            //WorldRepository has a 'GetAllTrips' method that described the implementation - by using the interface we could supply a mock up version
+            //and switch them out easily by changing 'WorldRepository' to some other class with the same methods
 
             //We have our WorldContextSeedData setup - but now we actually need to call it to push the data to the database so we have something to work with
             services.AddTransient<WorldContextSeedData>();//Construct it here so we can grab it in 'Configure' method

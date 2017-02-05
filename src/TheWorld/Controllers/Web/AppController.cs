@@ -15,20 +15,19 @@ namespace TheWorld.Controllers.Web
     {
         private IMailService _mailService;
         private IConfigurationRoot _config;
-        private WorldContext _context;
+        private IWorldRepository _repository;
 
-        public AppController(IMailService mailService, IConfigurationRoot config, WorldContext context)
+        public AppController(IMailService mailService, IConfigurationRoot config, IWorldRepository repository)
         {
             _mailService = mailService;
             _config = config;
-            _context = context;
+            _repository = repository;
         }
 
         public IActionResult Index()
         {
-            //context goes out into a database someplace, queries for the trips. This essentially runs a query
             //but we don't have to write an SQL query directly - we're dealing with objects directly.
-            var data = _context.Trips.ToList(); //Go to the database and grab the list of all the trips
+            var data = _repository.GetAllTrips(); //Go to the database and grab the list of all the trips
             //data now holds a list of all our trips
 
             return View(data); //Go find a view - render it and return it to the user
