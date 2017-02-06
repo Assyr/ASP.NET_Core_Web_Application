@@ -8,6 +8,7 @@ using TheWorld.ViewModels;
 using TheWorld.Services;
 using Microsoft.Extensions.Configuration;
 using TheWorld.Models;
+using Microsoft.Extensions.Logging;
 
 namespace TheWorld.Controllers.Web
 {
@@ -16,21 +17,34 @@ namespace TheWorld.Controllers.Web
         private IMailService _mailService;
         private IConfigurationRoot _config;
         private IWorldRepository _repository;
+        private ILogger<AppController> _logger;
 
-        public AppController(IMailService mailService, IConfigurationRoot config, IWorldRepository repository)
+        public AppController(IMailService mailService, 
+            IConfigurationRoot config, 
+            IWorldRepository repository,
+            ILogger<AppController> logger)
         {
             _mailService = mailService;
             _config = config;
             _repository = repository;
+            _logger = logger;
         }
 
         public IActionResult Index()
         {
-            //but we don't have to write an SQL query directly - we're dealing with objects directly.
-            var data = _repository.GetAllTrips(); //Go to the database and grab the list of all the trips
-            //data now holds a list of all our trips
+            try
+            {
+                //but we don't have to write an SQL query directly - we're dealing with objects directly.
+                var data = _repository.GetAllTrips(); //Go to the database and grab the list of all the trips
+                                                      //data now holds a list of all our trips
 
-            return View(data); //Go find a view - render it and return it to the user
+                return View(data); //Go find a view - render it and return it to the user
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Failed to retrieve trips in Index page: {ex.Message} ");
+                return Redirect("/error");
+            }
         }
 
         public IActionResult Contact()

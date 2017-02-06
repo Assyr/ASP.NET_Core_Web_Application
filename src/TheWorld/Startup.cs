@@ -58,17 +58,28 @@ namespace TheWorld
             //We have our WorldContextSeedData setup - but now we actually need to call it to push the data to the database so we have something to work with
             services.AddTransient<WorldContextSeedData>();//Construct it here so we can grab it in 'Configure' method
 
+            services.AddLogging(); //Add logging
+
             services.AddMvc();//Hey, here register all the MVC services
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, 
-            IHostingEnvironment env, WorldContextSeedData seeder)//configure the middleware!
+            IHostingEnvironment env, 
+            WorldContextSeedData seeder,
+            ILoggerFactory factory)//configure the middleware!
         {
             //We want to avoid throwing sensitive exception information to the user
             //We can solve this with the following
-            if(env.IsEnvironment("Development"))
+            if (env.IsEnvironment("Development"))
+            {
                 app.UseDeveloperExceptionPage(); //For debugging.
+                factory.AddDebug(LogLevel.Information);
+            }
+            else
+            {
+                factory.AddDebug(LogLevel.Error);
+            }
 
             app.UseStaticFiles();
             app.UseMvc(config =>
