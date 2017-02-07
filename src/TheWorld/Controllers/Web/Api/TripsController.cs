@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using TheWorld.Models;
+using TheWorld.ViewModels;
 
 namespace TheWorld.Controllers.Web.Api
 {
@@ -30,9 +31,17 @@ namespace TheWorld.Controllers.Web.Api
         }
 
        [HttpPost("")]//Bind the data in the body of the post request to 'theTrip' and more specifically... 'name' in 'theTrip' object as our POST request specifies
-        public IActionResult Post([FromBody]Trip theTrip)
+        public IActionResult Post([FromBody]TripViewModel theTrip)
         {
-            return Ok(true);
+            //Check if the data being fed is valid - and only if it is.. return a created 201 code which is a success
+            if(ModelState.IsValid)//ModelState.IsValid checks if what has been fed to theTrip fits the requires we set up in our 'TripViewModel'
+            {
+                //Using Created here to return a 201 status code 
+                //provide a uri to create the page at and provide our value
+                return Created($"api/trips/{theTrip.Name}",theTrip);
+            }
+
+            return BadRequest(ModelState);
         }
     }
 }
