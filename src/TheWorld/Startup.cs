@@ -10,6 +10,7 @@ using Microsoft.Extensions.Logging;
 using TheWorld.Services;
 using Microsoft.Extensions.Configuration;
 using TheWorld.Models;
+using Newtonsoft.Json.Serialization;
 
 namespace TheWorld
 {
@@ -60,7 +61,12 @@ namespace TheWorld
 
             services.AddLogging(); //Add logging
 
-            services.AddMvc();//Hey, here register all the MVC services
+            services.AddMvc()
+                .AddJsonOptions(config =>
+                {
+                    //This ensure we're using camel cased for our Json requests (api) - making it easier for users to consume
+                    config.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
+                });//Hey, here register all the MVC services
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

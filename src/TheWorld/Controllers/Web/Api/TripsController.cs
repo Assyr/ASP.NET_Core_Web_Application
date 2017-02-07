@@ -10,6 +10,12 @@ namespace TheWorld.Controllers.Web.Api
 {
     public class TripsController : Controller
     {
+        private IWorldRepository _repository;
+
+        public TripsController(IWorldRepository repository)
+        {
+            _repository = repository;
+        }
         //Specify the route below to call our JsonResult which returns a trip with the name "My Trip"
         [HttpGet("api/trips")]
         public IActionResult Get()
@@ -17,7 +23,7 @@ namespace TheWorld.Controllers.Web.Api
             /*if (true)
                 return BadRequest("Bad things happened");*/ //Handling a bad request
 
-            return Ok(new Trip() { Name = "My Trip" });
+            return Ok(_repository.GetAllTrips());
         }
     }
 }
