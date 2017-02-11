@@ -46,22 +46,24 @@ namespace TheWorld.Controllers.Web.Api
         }
 
        [HttpPost("")]//Bind the data in the body of the post request to 'theTrip' and more specifically... 'name' in 'theTrip' object as our POST request specifies
-        public IActionResult Post([FromBody]TripViewModel theTrip)
+        public async Task<IActionResult> Post([FromBody]TripViewModel theTrip)
         {
             //Check if the data being fed is valid - and only if it is.. return a created 201 code which is a success
             if(ModelState.IsValid)//ModelState.IsValid checks if what has been fed to theTrip fits the requires we set up in our 'TripViewModel'
             {
                 //Save to the database, first we must map our TripViewModel into 'Trip'
                 var newTrip = Mapper.Map<Trip>(theTrip); //Do the mapping using 'AutoMapper'
+                _repository.AddTrip(newTrip);
 
-
-
-                //Using Created here to return a 201 status code 
-                //provide a uri to create the page at and provide our value
-                return Created($"api/trips/{theTrip.Name}", Mapper.Map<TripViewModel>(newTrip));
+                    //Push our data to the database and run if it succeeds, do what's in the braces, else send a bad request saying it failed
+                if (await _repository.SaveChangesAsync())
+                {
+                    //Using Created here to return a 201 status code 
+                    //provide a uri to create the page at and provide our value
+                    return Created($"api/trips/{theTrip.Name}", Mapper.Map<TripViewModel>(newTrip));
+                }
             }
-
-            return BadRequest(ModelState);
+            return BadRequest("Failed to save the trip");
         }
     }
 }
