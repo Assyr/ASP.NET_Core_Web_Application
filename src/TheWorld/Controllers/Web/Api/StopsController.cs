@@ -42,5 +42,35 @@ namespace TheWorld.Controllers.Web.Api
 
             return BadRequest("Failed to get stops");
         }
+
+        [HttpPost("")]
+        public async Task<IActionResult> Post(string tripName, [FromBody]StopViewModel vm)
+        {
+            try
+            {
+                //First check if the data inputted into our StopViewModel from our Body is valid
+                if(ModelState.IsValid)//This will check to see if the data entered meets the requirements we set up in 'StopViewModel.
+                {
+                    var newStop = Mapper.Map<Stop>(vm);
+                    //Then look up the Geocodes of a new stop
+
+                    //Save to the database
+                    _repository.AddStop(tripName, newStop);
+
+                    if (await _repository.SaveChangesAsync())
+                    {
+                        return Created($"/api/trips/{tripName}/stops/{newStop.Name}",
+                            Mapper.Map<StopViewModel>(newStop));
+                    }
+                }
+
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError("Failed to save new Stop: {0}", ex);
+            }
+
+            return BadRequest("Failed to save new stop");
+        }
     }
 }

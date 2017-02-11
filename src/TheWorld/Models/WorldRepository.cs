@@ -24,6 +24,21 @@ namespace TheWorld.Models
             
         }
 
+        public void AddStop(string tripName, Stop newStop)
+        {
+            //Grab our trip by the name supplied
+            var trip = GetTripByName(tripName);
+
+            //If it exists..
+            if(trip != null)
+            {
+                //Add our stop to this trip (foreign key is being set in our Stops table to indicate which trip it belongs to (trip id))
+                trip.Stops.Add(newStop);
+                //And here we are actually adding the stop to our stops table
+                _context.Stops.Add(newStop);
+            }
+        }
+
         public void AddTrip(Trip trip)
         {
             //Add our trip to the context
