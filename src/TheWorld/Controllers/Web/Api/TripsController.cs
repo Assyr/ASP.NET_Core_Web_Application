@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,11 +16,13 @@ namespace TheWorld.Controllers.Web.Api
     [Route("api/trips")]
     public class TripsController : Controller
     {
+        private ILogger<TripsController> _logger;
         private IWorldRepository _repository;
 
-        public TripsController(IWorldRepository repository)
+        public TripsController(IWorldRepository repository, ILogger<TripsController> logger)
         {
             _repository = repository;
+            _logger = logger;
         }
         //Specify the route below to call our JsonResult which returns a trip with the name "My Trip"
         [HttpGet("")]
@@ -36,6 +39,7 @@ namespace TheWorld.Controllers.Web.Api
             catch (Exception ex)
             {
                 // TODO Log the ex error.
+                _logger.LogError($"Failed to get All Trips: {ex}");
 
                 return BadRequest("Error Occurred");
             }
