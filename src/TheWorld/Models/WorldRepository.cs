@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Hosting;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -36,6 +37,15 @@ namespace TheWorld.Models
                 _logger.LogInformation("Getting all trips from _context (The database)");
 
             return _context.Trips.ToList();
+        }
+
+        public Trip GetTripByName(string tripName)
+        {
+            //Using our context, access our Trips and find the trip that matches our tripName and return it
+            return _context.Trips
+                .Include(t => t.Stops) //This line here adds the stops that are parrt of the trip we're trying to find to the trip. So we can access the trip that's returned and get access to the stops and not just the trip itself
+                .Where(t => t.Name == tripName)
+                .FirstOrDefault();
         }
 
         public async Task<bool> SaveChangesAsync()

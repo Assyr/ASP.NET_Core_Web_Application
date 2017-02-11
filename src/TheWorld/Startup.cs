@@ -80,6 +80,7 @@ namespace TheWorld
             Mapper.Initialize(config =>
             {   //Create a map between TripViewModel and Trip so we can use the AutoMapper functionality in our TripsController class to map the validated TripViewModel to Trip
                 config.CreateMap<TripViewModel, Trip>().ReverseMap();
+                config.CreateMap<StopViewModel, Stop>().ReverseMap();
             });
 
             //We want to avoid throwing sensitive exception information to the user
