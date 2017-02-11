@@ -11,6 +11,8 @@ using TheWorld.Services;
 using Microsoft.Extensions.Configuration;
 using TheWorld.Models;
 using Newtonsoft.Json.Serialization;
+using AutoMapper;
+using TheWorld.ViewModels;
 
 namespace TheWorld
 {
@@ -75,6 +77,11 @@ namespace TheWorld
             WorldContextSeedData seeder,
             ILoggerFactory factory)//configure the middleware!
         {
+            Mapper.Initialize(config =>
+            {   //Create a map between TripViewModel and Trip so we can use the AutoMapper functionality in our TripsController class to map the validated TripViewModel to Trip
+                config.CreateMap<TripViewModel, Trip>().ReverseMap();
+            });
+
             //We want to avoid throwing sensitive exception information to the user
             //We can solve this with the following
             if (env.IsEnvironment("Development"))

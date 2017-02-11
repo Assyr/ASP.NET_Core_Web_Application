@@ -12,7 +12,7 @@ namespace TheWorld.ViewModels
         [Required]
         [StringLength(100, MinimumLength = 4)]
         public string Name { get; set; }      //Default is now unless overriden
-        public DateTime Created { get; set; } = DateTime.UtcNow;
+        public DateTime DateCreated { get; set; } = DateTime.UtcNow;
 
     }
 }
