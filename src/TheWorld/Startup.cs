@@ -13,6 +13,7 @@ using TheWorld.Models;
 using Newtonsoft.Json.Serialization;
 using AutoMapper;
 using TheWorld.ViewModels;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 
 namespace TheWorld
 {
@@ -63,6 +64,16 @@ namespace TheWorld
             //We have our WorldContextSeedData setup - but now we actually need to call it to push the data to the database so we have something to work with
             services.AddTransient<WorldContextSeedData>();//Construct it here so we can grab it in 'Configure' method
 
+            //Adding identity as a service and configure the options via the config
+            services.AddIdentity<WorldUser, IdentityRole>(config =>
+            {
+                config.User.RequireUniqueEmail = true;
+                config.Password.RequiredLength = 8;
+                //Where to direct the application for Login when authorization fails, we provided the following path - this will also store a return url so it knows where to bring the user back after they succesfully login
+                config.Cookies.ApplicationCookie.LoginPath = "/Auth/Login";
+            })
+            .AddEntityFrameworkStores<WorldContext>();
+
             services.AddLogging(); //Add logging
 
             services.AddMvc()
@@ -79,6 +90,11 @@ namespace TheWorld
             WorldContextSeedData seeder,
             ILoggerFactory factory)//configure the middleware!
         {
+            app.UseStaticFiles();
+
+            //Turn identity on
+            app.UseIdentity();
+
             Mapper.Initialize(config =>
             {   //Create a map between TripViewModel and Trip so we can use the AutoMapper functionality in our TripsController class to map the validated TripViewModel to Trip
                 config.CreateMap<TripViewModel, Trip>().ReverseMap();
@@ -97,7 +113,7 @@ namespace TheWorld
                 factory.AddDebug(LogLevel.Error);
             }
 
-            app.UseStaticFiles();
+
             app.UseMvc(config =>
             {
                 config.MapRoute(
