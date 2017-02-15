@@ -4,5 +4,8 @@
   },
   "ConnectionStrings": { //We can use an actual SQL connection string here or use one setup with the VS installation
     "WorldContextConnection": "Server=(localdb)\\MSSQLLocalDB; Database=TheWorldDB; Trusted_Connection=true;MultipleActiveResultSets=true;"
+  },
+  "Keys": {
+    "BingKey": "DONTEVERPUTKEYSINSOURCECONTROL"
   }
 }

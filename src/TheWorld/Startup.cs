@@ -53,6 +53,8 @@ namespace TheWorld
             services.AddDbContext<WorldContext>();
             services.AddScoped<IWorldRepository, WorldRepository>();
 
+            services.AddTransient<GeoCoordsService>(); //Transient doesn't re-use the provided service/class - creates a new one every time.
+
             //Interfaces allow us to adjust the implemention of the contents of the interface
             //for example, IWorldRepository specifies a method 'GetAllTrips' but doesn't say how to implement it
             //WorldRepository has a 'GetAllTrips' method that described the implementation - by using the interface we could supply a mock up version

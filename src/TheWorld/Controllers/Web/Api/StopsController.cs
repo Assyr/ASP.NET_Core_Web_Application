@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using TheWorld.Models;
+using TheWorld.Services;
 using TheWorld.ViewModels;
 
 namespace TheWorld.Controllers.Web.Api
@@ -14,13 +15,17 @@ namespace TheWorld.Controllers.Web.Api
     [Route("/api/trips/{tripName}/stops")]
     public class StopsController : Controller
     {
+        private GeoCoordsService _coordsService;
         private ILogger<StopsController> _logger;
         private IWorldRepository _repository;
 
-        public StopsController(IWorldRepository repository, ILogger<StopsController> logger)
+        public StopsController(IWorldRepository repository, 
+            ILogger<StopsController> logger,
+            GeoCoordsService coordsService)
         {
             _repository = repository;
             _logger = logger;
+            _coordsService = coordsService;
         }
         [HttpGet("")]
         public IActionResult Get(string tripName)
@@ -52,15 +57,28 @@ namespace TheWorld.Controllers.Web.Api
                 if(ModelState.IsValid)//This will check to see if the data entered meets the requirements we set up in 'StopViewModel.
                 {
                     var newStop = Mapper.Map<Stop>(vm);
-                    //Then look up the Geocodes of a new stop
 
-                    //Save to the database
-                    _repository.AddStop(tripName, newStop);
-
-                    if (await _repository.SaveChangesAsync())
+                    //Then look up the Geocodes of a new stop by calling our gecodeservice and returning the GeoCoordsResult instance
+                    //with the supplied stop name
+                    var result = await _coordsService.GetCoordAsync(newStop.Name);
+                    if (!result.Success) //If the lookup wasn't succesful - we can check this with 'Success'
                     {
-                        return Created($"/api/trips/{tripName}/stops/{newStop.Name}",
-                            Mapper.Map<StopViewModel>(newStop));
+                        _logger.LogError(result.Message);
+                    }
+                    else
+                    {
+                        //Adjust the stops latitude and longitude before pushing to the database
+                        newStop.Latitude = result.Latitude;
+                        newStop.Longitude = result.Longitude;
+
+                        //Save to the database
+                        _repository.AddStop(tripName, newStop);
+
+                        if (await _repository.SaveChangesAsync())
+                        {
+                            return Created($"/api/trips/{tripName}/stops/{newStop.Name}",
+                                Mapper.Map<StopViewModel>(newStop));
+                        }
                     }
                 }
 
