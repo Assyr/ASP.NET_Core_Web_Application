@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Identity;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -8,23 +9,40 @@ namespace TheWorld.Models
     public class WorldContextSeedData
     {
         private WorldContext _context;
+        private UserManager<WorldUser> _userManager;
 
         //ctor
-        public WorldContextSeedData(WorldContext context)
+        public WorldContextSeedData(WorldContext context, 
+            UserManager<WorldUser> userManager)
         {
             _context = context;
+            _userManager = userManager;
         }
 
         //async method
         public async Task EnsureSeedData()
         {
-            if (!_context.Trips.Any())//check if _context.Trips doesn't have any trips in the DB
+            //Wait till we can find it.. and then execute what's in the {}
+            if(await _userManager.FindByEmailAsync("john.chang@theworld.com") == null)
             {
+                var user = new WorldUser()
+                {
+                    UserName = "johnchang",
+                    Email = "john.chang@theworld.com"
+                };
+
+                //Now push our 'user' to to the database that is of type WorldUser so it corresponds to the columns and provide a password
+                //The user manager knows where to push it because it's a 'UserManager' instance which knows which table to push to using ASP.NET Core Identity
+                await _userManager.CreateAsync(user, "P@ssw0rd!");
+            }
+
+            if (!_context.Trips.Any())//check if _context.Trips doesn't have any trips in the DB
+            {                
                 var usTrip = new Trip()
                 {
                     DateCreated = DateTime.UtcNow,
                     Name = "US Trip",
-                    UserName = "", //TODO Add UserName
+                    UserName = "johnchang", //TODO Add UserName
                     Stops = new List<Stop>()
                     {
                         new Stop() {  Name = "Atlanta, GA", Arrival = new DateTime(2014, 6, 4), Latitude = 33.748995, Longitude = -84.387982, Order = 0 },
@@ -44,7 +62,7 @@ namespace TheWorld.Models
                 {
                     DateCreated = DateTime.UtcNow,
                     Name = "WorldTrip",
-                    UserName = "", //TODO Add UserName
+                    UserName = "johnchang", //TODO Add UserName
                     Stops = new List<Stop>()
                     {
                         new Stop() { Order = 0, Latitude =  33.748995, Longitude =  -84.387982, Name = "Atlanta, Georgia", Arrival = DateTime.Parse("Jun 3, 2014") },
