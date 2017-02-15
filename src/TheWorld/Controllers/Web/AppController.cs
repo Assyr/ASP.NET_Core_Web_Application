@@ -9,6 +9,7 @@ using TheWorld.Services;
 using Microsoft.Extensions.Configuration;
 using TheWorld.Models;
 using Microsoft.Extensions.Logging;
+using Microsoft.AspNetCore.Authorization;
 
 namespace TheWorld.Controllers.Web
 {
@@ -31,6 +32,12 @@ namespace TheWorld.Controllers.Web
         }
 
         public IActionResult Index()
+        {
+            return View(); //Go find a view - render it and return it to the user
+        }
+
+        [Authorize] //This will check if the host requesting this page is authorized - if not it'll attempt to redirect them to a location where they can login and authenticate
+        public IActionResult Trips()
         {
             try
             {
