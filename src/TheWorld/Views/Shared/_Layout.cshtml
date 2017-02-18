@@ -13,12 +13,20 @@
 
 <body>
     <div id="sidebar">
-        <img src="~/img/avatar.jpg" alt="image_of_me" class="avatar" />
-        <span id="username">Leon Dawod</span>
+        @if (User.Identity.IsAuthenticated) //If the user is authenticated, we show the avatar and the username
+        {
+            <img src="~/img/avatar.jpg" alt="image_of_me" class="avatar" />
+            <span id="username">@User.Identity.Name</span> //Uses mvc's services to pull the username we authenticated with
+        }
         <ul class="nav">
             <li class="active"><a asp-controller="App" asp-action="Index">Home</a></li>
             <li><a asp-controller="App" asp-action="About">About</a></li>
             <li><a asp-controller="App" asp-action="Contact">Contact</a></li>
+            @if (User.Identity.IsAuthenticated)
+            {
+                <li><a asp-controller="App" asp-action="Trips">Trips</a></li>
+                <li><a asp-controller="Auth" asp-action="Logout">Logout</a></li>
+            }
         </ul>
     </div>
 
@@ -61,13 +69,13 @@
             <div class="navbar navbar-inverse navbar-fixed-bottom">
                 <h4 class="text-center text-info">&copy; 2017 The World Ltd.</h4>
             </div>
-            </div>
         </div>
+    </div>
 
-        <script type="text/javascript" src="~/lib/jquery/dist/jquery.min.js"></script>
-        <script type="text/javascript" src="~/lib/bootstrap/js/bootstrap.min.js"></script>
-        <script type="text/javascript" src="~/js/site.js"></script>
-        @RenderSection("scripts", false) <!--If we have any scripts in the 'scripts' section on the page injecting itself into here, add the scripts at the bottom here since we want to execute them afterwards-->
+    <script type="text/javascript" src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script type="text/javascript" src="~/lib/bootstrap/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="~/js/site.js"></script>
+    @RenderSection("scripts", false) <!--If we have any scripts in the 'scripts' section on the page injecting itself into here, add the scripts at the bottom here since we want to execute them afterwards-->
 
 </body>
 </html>

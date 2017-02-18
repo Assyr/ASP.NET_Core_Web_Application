@@ -14,6 +14,7 @@ using Newtonsoft.Json.Serialization;
 using AutoMapper;
 using TheWorld.ViewModels;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.AspNetCore.Mvc;
 
 namespace TheWorld
 {
@@ -76,12 +77,19 @@ namespace TheWorld
 
             services.AddLogging(); //Add logging
 
-            services.AddMvc()
-                .AddJsonOptions(config =>
+            services.AddMvc(config =>
+            {
+                if (_env.IsProduction())
                 {
-                    //This ensure we're using camel cased for our Json requests (api) - making it easier for users to consume
-                    config.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
-                });//Hey, here register all the MVC services
+                    //Adds a filter so that if we attempt to go to an http, it's going to try to redirect to https
+                    config.Filters.Add(new RequireHttpsAttribute());
+                }
+            })
+            .AddJsonOptions(opt =>
+            {
+                //This ensure we're using camel cased for our Json requests (api) - making it easier for users to consume
+                opt.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
+            });//Hey, here register all the MVC services
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
