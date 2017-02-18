@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
@@ -13,7 +14,9 @@ namespace TheWorld.Controllers.Web.Api
 {
     //Set up a base route for the entire class instead of specifying one for each function
     //Now we just specify whether they're Get or Post requests at the function level.
+    [Authorize]
     [Route("api/trips")]
+    //Using this class requires authorization.
     public class TripsController : Controller
     {
         private ILogger<TripsController> _logger;
@@ -32,9 +35,8 @@ namespace TheWorld.Controllers.Web.Api
                 return BadRequest("Bad things happened");*/ //Handling a bad request
             try
             {
-                var results = _repository.GetAllTrips();
+                var results = _repository.GetTripsByUsername(this.User.Identity.Name);
                 return Ok(Mapper.Map<IEnumerable<TripViewModel>>(results));
-
             }
             catch (Exception ex)
             {
@@ -53,6 +55,10 @@ namespace TheWorld.Controllers.Web.Api
             {
                 //Save to the database, first we must map our TripViewModel into 'Trip'
                 var newTrip = Mapper.Map<Trip>(theTrip); //Do the mapping using 'AutoMapper'
+
+                //Before adding our trip using repostiroy, set a name for it and the name is the authenticated user
+                newTrip.UserName = User.Identity.Name;
+
                 _repository.AddTrip(newTrip);
 
                     //Push our data to the database and run if it succeeds, do what's in the braces, else send a bad request saying it failed

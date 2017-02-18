@@ -15,6 +15,7 @@ using AutoMapper;
 using TheWorld.ViewModels;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authentication.Cookies;
 
 namespace TheWorld
 {
@@ -72,6 +73,26 @@ namespace TheWorld
                 config.Password.RequiredLength = 8;
                 //Where to direct the application for Login when authorization fails, we provided the following path - this will also store a return url so it knows where to bring the user back after they succesfully login
                 config.Cookies.ApplicationCookie.LoginPath = "/Auth/Login";
+                //This handles the events of our cookie...
+                config.Cookies.ApplicationCookie.Events = new CookieAuthenticationEvents()
+                {
+                    //In the event of redirection to our login...(this overrides any cast of redirection to login)
+                    OnRedirectToLogin = async ctx =>
+                    {
+                        //Check if we're dealing with the API - if we are we send a response with status code 401
+                        if(ctx.Request.Path.StartsWithSegments("/api") &&//Does the request path start with /api - this tells us we're dealing with API
+                        ctx.Response.StatusCode == 200) //Is the response code returning OKAY? we don't want to return 401 below if the status code is something else
+                        {
+                            ctx.Response.StatusCode = 401;
+                        }
+                        else
+                        {
+                            //If we're not dealing with API just redirect to the redirect uri like we usually do
+                            ctx.Response.Redirect(ctx.RedirectUri);
+                        }
+                        await Task.Yield();//Let the direction complete..
+                    }
+                };
             })
             .AddEntityFrameworkStores<WorldContext>();
 

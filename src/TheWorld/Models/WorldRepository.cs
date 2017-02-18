@@ -63,6 +63,18 @@ namespace TheWorld.Models
                 .FirstOrDefault();
         }
 
+        public IEnumerable<Trip> GetTripsByUsername(string name)
+        {
+            //Return all trips where the UserName is equal to the name provided
+            return _context
+                .Trips
+                .Include(t => t.Stops) //get the stops too that are part of these trips too
+                .Where(t => t.UserName == name)
+                .ToList();
+            //We don't use include here like we did with GetTripByName because we just want the names that are
+            //being passed back and not the entire object
+        }
+
         public async Task<bool> SaveChangesAsync()
         {
             //push our data to the database (in this case it's whatever has been added via 'AddTrip' and return a bool value that indicates whether this succeeded or not
