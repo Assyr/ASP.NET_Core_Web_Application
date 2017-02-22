@@ -7,7 +7,7 @@
             <!--Loop through each of our trips and display the trip name and date created-->
             <td>{{trip.name}}</td>
             <td>{{trip.created | date: 'MM-dd-yyyy'}}</td> <!--Filter as date-->
-            <td><a href="#!/editor" class="btn btn-sm btn-primary">Manage</a></td> <!--Create a button for each entry-->
+            <td><a ng-href="#!/editor/{{trip.name}}" class="btn btn-sm btn-primary">Manage</a></td> <!--Create a button for each entry-->
         </tr>
     </table>
 
