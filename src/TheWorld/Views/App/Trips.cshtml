@@ -13,6 +13,9 @@
     <!--ng-app tells angular to run in this container-->
     <!--vm is databinding so we can access it-->
     <div ng-controller="tripsController as vm" class="col-md-6 col-md-offset-3">
+        <!--Only displays error message if it exists and isn't an empty string by using ng-show-->
+        <div class="text-danger" ng-show="vm.errorMessage">{{ vm.errorMessage }}</div>
+        <div ng-show="vm.isBusy" class="text-center"><i class="fa fa-spinner fa-spin"></i>Loading...</div>
         <table class="table table-responsive table-striped">
             <tr ng-repeat="trip in vm.trips">
                 <!--Loop through each of our trips and display the trip name and date created-->
