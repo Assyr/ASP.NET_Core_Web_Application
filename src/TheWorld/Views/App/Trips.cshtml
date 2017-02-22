@@ -5,6 +5,7 @@
 }
 @section Scripts {
     <script src="~/lib/angular/angular.min.js"></script>
+    <script src="~/lib/angular-route/angular-route.min.js"></script>
     <script src="~/js/simpleControls.js"></script>
     <script src="~/js/app-trips.js"></script>
     <script src="~/js/tripsController.js"></script>
@@ -13,35 +14,8 @@
 <div class="row" ng-app="app-trips">
     <!--ng-app tells angular to run in this container-->
     <!--vm is databinding so we can access it-->
-    <div ng-controller="tripsController as vm" class="col-md-6 col-md-offset-3">
-        <!--Only displays error message if it exists and isn't an empty string by using ng-show-->
-        <div class="text-danger" ng-show="vm.errorMessage">{{ vm.errorMessage }}</div>
-        <wait-cursor display-when="vm.isBusy"></wait-cursor>
-        <table class="table table-responsive table-striped">
-            <tr ng-repeat="trip in vm.trips">
-                <!--Loop through each of our trips and display the trip name and date created-->
-                <td>{{trip.name}}</td>
-                <td>{{trip.created | date: 'MM-dd-yyyy'}}</td> <!--Filter as date-->
-                <td><a href="#" class="btn btn-sm btn-primary">Manage</a></td> <!--Create a button for each entry-->
-            </tr>
-        </table>
 
-        <form novalidate name="newTripForm" ng-submit="vm.addTrip()">
-            <div class="form-group">
-                <label for="name">Trip Name</label>
-                <input class="form-control" type="text" id="name" name="name" ng-model="vm.newTrip.name" required ng-minlength="5" />
-                <span ng-show="newTripForm.name.$error.required" class="text-warning">Name is required</span>
-                <span ng-show="newTripForm.name.$error.minlength" class="text-warning">Name must be at least five characters long</span>
-                <!--span that spits out an error for our required fields if they the requirements are not met-->
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Add"
-                       class="btn btn-success btn-sm"
-                       ng-disabled="newTripForm.$invalid" />
-                <!--If any of our 'validation' pieces are invalid then disable the button-->
-            </div>
-        </form>
-    </div>
+    <div ng-view></div> <!--find and use the ng-view and use that as the placeholder for when views are injected onto the page-->
 
     <div class="col-md-6">
         <h1>The World</h1>
