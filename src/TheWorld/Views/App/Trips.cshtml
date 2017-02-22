@@ -3,9 +3,12 @@
     //CSHARP content
     ViewBag.Title = "Home Page";
 }
-
+@section Scripts {
+    <script src="~/lib/angular/angular.min.js"></script>
+}
 <!--a 'row' is a container for making grid decisions inside of-->
-<div class="row">
+<div class="row" ng-app>
+    <!--ng-app tells angular to run in this container-->
     <div class="col-md-6">
         <h1>The World</h1>
         <p>This will be a fun website soon!</p>
@@ -16,10 +19,10 @@
             </div>
             <div class="form-group">
                 <label>Location</label>
-                <input class="form-control"/>               <!--This is the input for our location-->
+                <input class="form-control" />               <!--This is the input for our location-->
             </div>
             <div>
-                <input type="submit" value="Add" class="btn btn-success"/> <!--This is a button-->
+                <input type="submit" value="Add" class="btn btn-success" /> <!--This is a button-->
             </div>
         </form>
     </div>

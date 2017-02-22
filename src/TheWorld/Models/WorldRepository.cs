@@ -24,10 +24,12 @@ namespace TheWorld.Models
             
         }
 
-        public void AddStop(string tripName, Stop newStop)
+        public void AddStop(string tripName, Stop newStop, string username)
         {
-            //Grab our trip by the name supplied
-            var trip = GetTripByName(tripName);
+            //Grab our trip by the name supplied and the username that owns that trip
+            var trip = GetUserTripByName(tripName, username);
+
+            //This is to ensure we are getting the correct trip^  and below we can add our stop to it
 
             //If it exists..
             if(trip != null)
@@ -73,6 +75,15 @@ namespace TheWorld.Models
                 .ToList();
             //We don't use include here like we did with GetTripByName because we just want the names that are
             //being passed back and not the entire object
+        }
+
+        public Trip GetUserTripByName(string tripName, string username)
+        {
+            //Using our context, access our Trips and find the trip that matches our tripName and return it
+            return _context.Trips
+                .Include(t => t.Stops) //This line here adds the stops that are parrt of the trip we're trying to find to the trip. So we can access the trip that's returned and get access to the stops and not just the trip itself
+                .Where(t => t.Name == tripName && t.UserName == username) //We do the username check so that we get the trip name specific to the user - users might have the same trip names and we don't want to return these to random users
+                .FirstOrDefault();
         }
 
         public async Task<bool> SaveChangesAsync()

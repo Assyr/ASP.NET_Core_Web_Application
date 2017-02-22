@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
@@ -11,7 +12,9 @@ using TheWorld.Services;
 using TheWorld.ViewModels;
 
 namespace TheWorld.Controllers.Web.Api
-{                   //The brace here refers to a parameter - tripName here links straight to 'string tripName' in our get method
+{   
+    [Authorize] //Any call to this class requires the request to be from an authorized user
+    //The brace here refers to a parameter - tripName here links straight to 'string tripName' in our get method
     [Route("/api/trips/{tripName}/stops")]
     public class StopsController : Controller
     {
@@ -32,7 +35,7 @@ namespace TheWorld.Controllers.Web.Api
         {
             try
             {
-                var trip = _repository.GetTripByName(tripName); //Here we have returned our direct 'Trip' entity of the tripName specified, but I don't want to pass this to the user..
+                var trip = _repository.GetUserTripByName(tripName, User.Identity.Name); //Here we have returned our direct 'Trip' entity of the tripName specified, but I don't want to pass this to the user..
 
                 //Since we will be accessing the Stops of our trip, we use our StopViewModel to map our collection of stops to a list of 'IEnumerable StopViewModel's'
                 //What I want to pass to the user is the StopViewModels of our 'Trip' Stops so we don't give them the guts of it all and only what we want them to see.
@@ -72,7 +75,9 @@ namespace TheWorld.Controllers.Web.Api
                         newStop.Longitude = result.Longitude;
 
                         //Save to the database
-                        _repository.AddStop(tripName, newStop);
+                        _repository.AddStop(tripName, newStop, User.Identity.Name);
+
+
 
                         if (await _repository.SaveChangesAsync())
                         {
