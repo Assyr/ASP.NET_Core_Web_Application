@@ -20,7 +20,9 @@
         vm.newTrip = {};
 
         vm.addTrip = function () {
-            alert(vm.newTrip.name);
+            vm.trips.push({ name: vm.newTrip.name, created: new Date() })
+            //The above function pushes a new trip to our vm with the provided name and the current date
+            vm.newTrip = {}; //Reset our newTrip model data to reset the data back in the form since the form is binded to newTrip
         };
     }
 
