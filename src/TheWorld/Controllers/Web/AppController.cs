@@ -41,11 +41,7 @@ namespace TheWorld.Controllers.Web
         {
             try
             {
-                //but we don't have to write an SQL query directly - we're dealing with objects directly.
-                var data = _repository.GetAllTrips(); //Go to the database and grab the list of all the trips
-                                                      //data now holds a list of all our trips
-
-                return View(data); //Go find a view - render it and return it to the user
+                return View(); //Go find a view - render it and return it to the user
             }
             catch (Exception ex)
             {
